@@ -1,0 +1,17 @@
+[
+  {
+      "date": "2025-11-10",
+      "title": "Team Meeting",
+      "description": "Discuss Q4 performance."
+  },
+  {
+      "date": "2025-11-15",
+      "title": "Project Deadline",
+      "description": "Submission of final report."
+  },
+  {
+      "date": "2025-11-25",
+      "title": "Client Presentation",
+      "description": "Present new product features."
+  }
+]

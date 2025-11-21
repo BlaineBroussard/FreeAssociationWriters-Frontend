@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<!--
+	Solid State by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Generic - Solid State by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>/* style.css */
+		    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .controls button {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .controls button:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .current-month {
+            font-size: 1.5em;
+            min-width: 200px;
+        }
+
+        .calendar {
+            padding: 30px;
+			height: 900px;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: bold;
+            color: #667eea;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+			color: black;
+
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .day.other-month {
+            opacity: 0.3;
+        }
+
+        .day.today {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #667eea;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .day.today .event-dot {
+            background: white;
+        }
+
+        .events-container {
+            margin-top: 5px;
+            font-size: 0.7em;
+        }
+
+        .event-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.85em;
+        }
+
+        .json-input {
+            padding: 30px;
+            background: #f5f5f5;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .json-input h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .json-input textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            resize: vertical;
+        }
+
+        .json-input button {
+            margin-top: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .json-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+		  </style>
+	</head>
+	<script>
+ 		let currentDate = new Date();
+        let events = [];
+
+        // Sample events
+        const sampleEvents = [
+            { date: "2025-11-25", title: "Team Meeting", description: "Weekly sync" },
+            { date: "2025-11-28", title: "Thanksgiving", description: "Holiday" },
+            { date: "2025-12-25", title: "Christmas", description: "Holiday" },
+            { date: "2025-12-31", title: "New Year's Eve", description: "Party" }
+        ];
+
+        events = sampleEvents;
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('currentMonth').textContent = 
+                currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+            
+            const firstDayIndex = firstDay.getDay();
+            const lastDayDate = lastDay.getDate();
+            const prevLastDayDate = prevLastDay.getDate();
+
+            const daysContainer = document.getElementById('calendarDays');
+            daysContainer.innerHTML = '';
+
+            const today = new Date();
+            const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+            // Previous month days
+            for (let i = firstDayIndex - 1; i >= 0; i--) {
+                const day = prevLastDayDate - i;
+                daysContainer.innerHTML += `<div class="day other-month"><div class="day-number">${day}</div></div>`;
+            }
+
+            // Current month days
+            for (let day = 1; day <= lastDayDate; day++) {
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEvents = events.filter(e => e.date === dateString);
+                
+                const isToday = isCurrentMonth && day === today.getDate();
+                const todayClass = isToday ? 'today' : '';
+                
+                let eventHTML = '';
+                if (dayEvents.length > 0) {
+                    eventHTML = '<div class="events-container">';
+                    dayEvents.forEach(event => {
+                        eventHTML += `<div class="event-item" title="${event.description || event.title}">${event.title}</div>`;
+                    });
+                    eventHTML += '</div>';
+                }
+
+                daysContainer.innerHTML += `
+                    <div class="day ${todayClass}">
+                        <div class="day-number">${day}</div>
+                        ${eventHTML}
+                    </div>
+                `;
+            }
+
+            // Next month days
+            const totalCells = daysContainer.children.length;
+            const remainingCells = 42 - totalCells;
+            for (let day = 1; day <= remainingCells; day++) {
+                daysContainer.innerHTML += `<div class="day other-month"><div class="day-number">${day}</div></div>`;
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function loadEvents() {
+            const jsonInput = document.getElementById('jsonInput').value;
+            const messageEl = document.getElementById('message');
+            
+            try {
+                const parsedEvents = JSON.parse(jsonInput);
+                
+                if (!Array.isArray(parsedEvents)) {
+                    throw new Error('JSON must be an array of events');
+                }
+
+                events = parsedEvents;
+                renderCalendar();
+                
+                messageEl.textContent = `Successfully loaded ${events.length} event(s)!`;
+                messageEl.className = 'message success';
+                
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                messageEl.textContent = `Error: ${error.message}`;
+                messageEl.className = 'message error';
+            }
+        }
+
+        function loadFromFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const messageEl = document.getElementById('message');
+            
+            if (!file) {
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const parsedEvents = JSON.parse(e.target.result);
+                    
+                    if (!Array.isArray(parsedEvents)) {
+                        throw new Error('JSON must be an array of events');
+                    }
+
+                    events = parsedEvents;
+                    renderCalendar();
+                    
+                    messageEl.textContent = `Successfully loaded ${events.length} event(s) from ${file.name}!`;
+                    messageEl.className = 'message success';
+                    
+                    setTimeout(() => {
+                        messageEl.style.display = 'none';
+                    }, 3000);
+                } catch (error) {
+                    messageEl.textContent = `Error loading file: ${error.message}`;
+                    messageEl.className = 'message error';
+                }
+            };
+            
+            reader.onerror = function() {
+                messageEl.textContent = 'Error reading file';
+                messageEl.className = 'message error';
+            };
+            
+            reader.readAsText(file);
+        }
+
+        async function loadFromURL() {
+            const messageEl = document.getElementById('message');
+            
+            try {
+                messageEl.textContent = 'Loading events.json...';
+                messageEl.className = 'message';
+                messageEl.style.display = 'block';
+                
+                const response = await fetch('events.json');
+                
+                if (!response.ok) {
+                    throw new Error(`File not found (${response.status}). Make sure events.json is in the same directory.`);
+                }
+                
+                const parsedEvents = await response.json();
+                
+                if (!Array.isArray(parsedEvents)) {
+                    throw new Error('JSON must be an array of events');
+                }
+
+                events = parsedEvents;
+                renderCalendar();
+                
+                messageEl.textContent = `Successfully loaded ${events.length} event(s) from events.json!`;
+                messageEl.className = 'message success';
+                
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                messageEl.textContent = `Error: ${error.message}`;
+                messageEl.className = 'message error';
+            }
+        }
+
+        // Initialize calendar and load events on page load
+		window.onload = function() {     
+			renderCalendar();
+			loadFromURL();
+		};
+
+	  </script>
+	  
+	  
+	<body >
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="index.html">Free Association Writers</a></h1>
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<div class="inner">
+							<h2>Menu</h2>
+							<ul class="links">
+								<li><a href="index.html">Home</a></li>
+								<li><a href="generic.html">Calendar</a></li>
+						
+							</ul>
+							<a href="#" class="close">Close</a>
+						</div>
+					</nav>
+
+				<!-- Wrapper -->
+					<section id="wrapper">
+					
+						<div class="container">
+							<div class="header">
+								<h1>📅 Event Calendar</h1>
+								<div class="controls">
+									<button onclick="previousMonth()">◀ Previous</button>
+									<div class="current-month" id="currentMonth"></div>
+									<button onclick="nextMonth()">Next ▶</button>
+								</div>
+							</div>
+					
+							<div class="calendar">
+								<div class="weekdays">
+									<div class="weekday">Sun</div>
+									<div class="weekday">Mon</div>
+									<div class="weekday">Tue</div>
+									<div class="weekday">Wed</div>
+									<div class="weekday">Thu</div>
+									<div class="weekday">Fri</div>
+									<div class="weekday">Sat</div>
+								</div>
+								<div class="days" id="calendarDays"></div>
+							</div>
+					
+				
+						  
+
+					</section>
+
+		
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
